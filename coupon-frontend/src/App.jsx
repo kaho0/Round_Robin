@@ -1,17 +1,10 @@
 import React from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import CouponList from "./components/CouponList";
 import ClaimCoupon from "./components/ClaimCoupon";
 import Login from "./components/Login";
 import AdminPanel from "./components/AdminPanel";
-import ProtectedRoute from "./components/ProtectedRoute";
-
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ProtectedRoute from "./components/ProtectedRoute"; // Note: This is imported but not used
 
 function App() {
   return (
@@ -26,3 +19,5 @@ function App() {
     </BrowserRouter>
   );
 }
+
+export default App;
