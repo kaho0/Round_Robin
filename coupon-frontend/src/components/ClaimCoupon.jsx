@@ -1,54 +1,3 @@
-// import React, { useState, useEffect } from "react";
-// import axios from "axios";
-// import { useNavigate } from "react-router-dom";
-
-// const ClaimCoupon = () => {
-//   const [message, setMessage] = useState("");
-//   const navigate = useNavigate();
-
-//   // Automatically fetch the user's IP address
-//   const fetchUserIp = async () => {
-//     try {
-//       const response = await axios.get("https://api.ipify.org?format=json");
-//       return response.data.ip; // Returns the user's IP address
-//     } catch (error) {
-//       console.error("Failed to fetch IP address:", error);
-//       return null;
-//     }
-//   };
-
-//   // Generate a random session ID
-//   const generateSessionId = () => {
-//     return Math.random().toString(36).substring(2, 15); // Random alphanumeric string
-//   };
-
-//   const handleClaim = async () => {
-//     try {
-//       const userIp = await fetchUserIp(); // Get the user's IP address
-//       const userSession = generateSessionId(); // Generate a session ID
-
-//       const response = await axios.post("http://localhost:3001/claim", {
-//         userIp,
-//         userSession,
-//       });
-
-//       setMessage(response.data.message);
-//       setTimeout(() => navigate("/"), 2000); // Redirect to home after 2 seconds
-//     } catch (error) {
-//       setMessage(error.response?.data?.message || "Failed to claim coupon");
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <h1>Claim a Coupon</h1>
-//       <button onClick={handleClaim}>Claim Coupon</button>
-//       {message && <p>{message}</p>}
-//     </div>
-//   );
-// };
-
-// export default ClaimCoupon;import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -64,7 +13,9 @@ const ClaimCoupon = () => {
     const fetchCoupons = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:3001/coupons");
+        const response = await axios.get(
+          "https://round-robin-ebge.onrender.com/coupons"
+        );
         setCoupons(response.data);
         setLoading(false);
       } catch (error) {
@@ -114,11 +65,14 @@ const ClaimCoupon = () => {
       const userIp = await fetchUserIp(); // Get the user's IP address
       const userSession = generateSessionId(); // Generate a session ID
 
-      const response = await axios.post("http://localhost:3001/claim", {
-        userIp,
-        userSession,
-        couponId: selectedCoupon.id,
-      });
+      const response = await axios.post(
+        "https://round-robin-ebge.onrender.com/claim",
+        {
+          userIp,
+          userSession,
+          couponId: selectedCoupon.id,
+        }
+      );
 
       setLoading(false);
 

@@ -12,7 +12,9 @@ const CouponList = () => {
     const fetchCoupons = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:3001/coupons");
+        const response = await axios.get(
+          "https://round-robin-ebge.onrender.com/coupons"
+        );
         setCoupons(response.data);
         setLoading(false);
       } catch (error) {

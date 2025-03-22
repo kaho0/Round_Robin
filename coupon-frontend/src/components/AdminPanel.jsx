@@ -1,11 +1,25 @@
 // import React, { useEffect, useState } from "react";
-// import { PlusCircle, Clipboard, RefreshCw, Check, X } from "lucide-react";
+// import {
+//   PlusCircle,
+//   Clipboard,
+//   RefreshCw,
+//   Check,
+//   X,
+//   Upload,
+//   FileText,
+//   Edit,
+//   Save,
+// } from "lucide-react";
 
 // const AdminPanel = () => {
 //   const [coupons, setCoupons] = useState([]);
 //   const [claims, setClaims] = useState([]);
 //   const [newCouponCode, setNewCouponCode] = useState("");
 //   const [isLoading, setIsLoading] = useState(true);
+//   const [bulkCoupons, setBulkCoupons] = useState("");
+//   const [showBulkUpload, setShowBulkUpload] = useState(false);
+//   const [editingCoupon, setEditingCoupon] = useState(null);
+//   const [editedCode, setEditedCode] = useState("");
 
 //   useEffect(() => {
 //     // Fetch all coupons and claims
@@ -13,10 +27,10 @@
 //       setIsLoading(true);
 //       try {
 //         const couponsResponse = await fetch(
-//           "http://localhost:3001/admin/coupons"
+//           "https://round-robin-ebge.onrender.com/admin/coupons"
 //         );
 //         const claimsResponse = await fetch(
-//           "http://localhost:3001/admin/claims"
+//           "https://round-robin-ebge.onrender.com/admin/claims"
 //         );
 
 //         if (couponsResponse.ok && claimsResponse.ok) {
@@ -41,23 +55,26 @@
 
 //     try {
 //       // Add a new coupon
-//       const response = await fetch("http://localhost:3001/admin/coupons", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({
-//           code: newCouponCode,
-//           status: true,
-//         }),
-//       });
+//       const response = await fetch(
+//         "https://round-robin-ebge.onrender.com/admin/coupons",
+//         {
+//           method: "POST",
+//           headers: {
+//             "Content-Type": "application/json",
+//           },
+//           body: JSON.stringify({
+//             code: newCouponCode,
+//             status: true,
+//           }),
+//         }
+//       );
 
 //       if (response.ok) {
 //         setNewCouponCode("");
 
 //         // Refresh the coupon list
 //         const couponsResponse = await fetch(
-//           "http://localhost:3001/admin/coupons"
+//           "https://round-robin-ebge.onrender.com/admin/coupons"
 //         );
 //         const couponsData = await couponsResponse.json();
 //         setCoupons(couponsData);
@@ -71,7 +88,7 @@
 //     try {
 //       // Toggle coupon status
 //       const response = await fetch(
-//         `http://localhost:3001/admin/coupons/${id}`,
+//         `https://round-robin-ebge.onrender.com/admin/coupons/${id}`,
 //         {
 //           method: "PUT",
 //           headers: {
@@ -86,13 +103,116 @@
 //       if (response.ok) {
 //         // Refresh the coupon list
 //         const couponsResponse = await fetch(
-//           "http://localhost:3001/admin/coupons"
+//           "https://round-robin-ebge.onrender.com/admin/coupons"
 //         );
 //         const couponsData = await couponsResponse.json();
 //         setCoupons(couponsData);
 //       }
 //     } catch (error) {
 //       console.error("Failed to update coupon status:", error);
+//     }
+//   };
+
+//   const handleBulkUpload = async () => {
+//     if (!bulkCoupons.trim()) return;
+
+//     const couponCodes = bulkCoupons
+//       .split("\n")
+//       .map((code) => code.trim())
+//       .filter((code) => code.length > 0);
+
+//     if (couponCodes.length === 0) return;
+
+//     setIsLoading(true);
+//     try {
+//       // Add multiple coupons
+//       const response = await fetch(
+//         "https://round-robin-ebge.onrender.com/admin/coupons/bulk",
+//         {
+//           method: "POST",
+//           headers: {
+//             "Content-Type": "application/json",
+//           },
+//           body: JSON.stringify({
+//             codes: couponCodes,
+//           }),
+//         }
+//       );
+
+//       if (response.ok) {
+//         setBulkCoupons("");
+//         setShowBulkUpload(false);
+
+//         // Refresh the coupon list
+//         const couponsResponse = await fetch(
+//           "https://round-robin-ebge.onrender.com/admin/coupons"
+//         );
+//         const couponsData = await couponsResponse.json();
+//         setCoupons(couponsData);
+//       }
+//     } catch (error) {
+//       console.error("Failed to add bulk coupons:", error);
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+
+//   const handleFileUpload = (event) => {
+//     const file = event.target.files[0];
+//     if (!file) return;
+
+//     const reader = new FileReader();
+//     reader.onload = (e) => {
+//       const content = e.target.result;
+//       setBulkCoupons(content);
+//     };
+//     reader.readAsText(file);
+//   };
+
+//   const startEditing = (coupon) => {
+//     setEditingCoupon(coupon.id);
+//     setEditedCode(coupon.code);
+//   };
+
+//   const cancelEditing = () => {
+//     setEditingCoupon(null);
+//     setEditedCode("");
+//   };
+
+//   const updateCouponCode = async (id) => {
+//     if (
+//       !editedCode.trim() ||
+//       editedCode === coupons.find((c) => c.id === id).code
+//     ) {
+//       cancelEditing();
+//       return;
+//     }
+
+//     try {
+//       const response = await fetch(
+//         `https://round-robin-ebge.onrender.com/admin/coupons/${id}/code`,
+//         {
+//           method: "PUT",
+//           headers: {
+//             "Content-Type": "application/json",
+//           },
+//           body: JSON.stringify({
+//             code: editedCode,
+//           }),
+//         }
+//       );
+
+//       if (response.ok) {
+//         // Refresh the coupon list
+//         const couponsResponse = await fetch(
+//           "https://round-robin-ebge.onrender.com/admin/coupons"
+//         );
+//         const couponsData = await couponsResponse.json();
+//         setCoupons(couponsData);
+//         cancelEditing();
+//       }
+//     } catch (error) {
+//       console.error("Failed to update coupon code:", error);
 //     }
 //   };
 
@@ -113,7 +233,7 @@
 //               <h2 className="text-xl font-semibold text-gray-900 mb-4">
 //                 Add New Coupon
 //               </h2>
-//               <div className="flex">
+//               <div className="flex mb-4">
 //                 <input
 //                   type="text"
 //                   placeholder="Enter coupon code"
@@ -129,6 +249,59 @@
 //                   Add
 //                 </button>
 //               </div>
+//               <div className="mt-4">
+//                 <button
+//                   onClick={() => setShowBulkUpload(!showBulkUpload)}
+//                   className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-full justify-center"
+//                 >
+//                   <Upload className="h-5 w-5 mr-2" />
+//                   {showBulkUpload ? "Hide Bulk Upload" : "Bulk Upload Coupons"}
+//                 </button>
+//               </div>
+
+//               {showBulkUpload && (
+//                 <div className="mt-4 p-4 border border-gray-200 rounded-md bg-gray-50">
+//                   <h3 className="text-md font-medium text-gray-700 mb-2">
+//                     Bulk Upload
+//                   </h3>
+
+//                   <div className="mb-3">
+//                     <label
+//                       htmlFor="file-upload"
+//                       className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer"
+//                     >
+//                       <FileText className="h-5 w-5 mr-2" />
+//                       Upload File
+//                       <input
+//                         id="file-upload"
+//                         name="file-upload"
+//                         type="file"
+//                         accept=".txt,.csv"
+//                         className="sr-only"
+//                         onChange={handleFileUpload}
+//                       />
+//                     </label>
+//                     <p className="mt-1 text-xs text-gray-500">
+//                       Upload a .txt or .csv file with one coupon code per line
+//                     </p>
+//                   </div>
+
+//                   <textarea
+//                     placeholder="Or paste coupon codes here (one per line)"
+//                     value={bulkCoupons}
+//                     onChange={(e) => setBulkCoupons(e.target.value)}
+//                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 h-32 text-sm"
+//                   />
+
+//                   <button
+//                     onClick={handleBulkUpload}
+//                     disabled={!bulkCoupons.trim()}
+//                     className="mt-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed w-full justify-center"
+//                   >
+//                     Upload Coupons
+//                   </button>
+//                 </div>
+//               )}
 //             </div>
 //           </div>
 
@@ -178,7 +351,19 @@
 //                         coupons.map((coupon) => (
 //                           <tr key={coupon.id} className="hover:bg-gray-50">
 //                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-//                               {coupon.code}
+//                               {editingCoupon === coupon.id ? (
+//                                 <input
+//                                   type="text"
+//                                   value={editedCode}
+//                                   onChange={(e) =>
+//                                     setEditedCode(e.target.value)
+//                                   }
+//                                   className="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+//                                   autoFocus
+//                                 />
+//                               ) : (
+//                                 coupon.code
+//                               )}
 //                             </td>
 //                             <td className="px-6 py-4 whitespace-nowrap text-sm">
 //                               {coupon.status ? (
@@ -192,28 +377,59 @@
 //                               )}
 //                             </td>
 //                             <td className="px-6 py-4 whitespace-nowrap text-sm">
-//                               <button
-//                                 onClick={() =>
-//                                   toggleCouponStatus(coupon.id, coupon.status)
-//                                 }
-//                                 className={`inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded ${
-//                                   coupon.status
-//                                     ? "text-red-700 bg-red-100 hover:bg-red-200"
-//                                     : "text-green-700 bg-green-100 hover:bg-green-200"
-//                                 }`}
-//                               >
-//                                 {coupon.status ? (
-//                                   <>
+//                               {editingCoupon === coupon.id ? (
+//                                 <div className="flex space-x-2">
+//                                   <button
+//                                     onClick={() => updateCouponCode(coupon.id)}
+//                                     className="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded text-green-700 bg-green-100 hover:bg-green-200"
+//                                   >
+//                                     <Save className="h-4 w-4 mr-1" />
+//                                     Save
+//                                   </button>
+//                                   <button
+//                                     onClick={cancelEditing}
+//                                     className="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded text-gray-700 bg-gray-100 hover:bg-gray-200"
+//                                   >
 //                                     <X className="h-4 w-4 mr-1" />
-//                                     Disable
-//                                   </>
-//                                 ) : (
-//                                   <>
-//                                     <Check className="h-4 w-4 mr-1" />
-//                                     Enable
-//                                   </>
-//                                 )}
-//                               </button>
+//                                     Cancel
+//                                   </button>
+//                                 </div>
+//                               ) : (
+//                                 <div className="flex space-x-2">
+//                                   <button
+//                                     onClick={() => startEditing(coupon)}
+//                                     className="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200"
+//                                   >
+//                                     <Edit className="h-4 w-4 mr-1" />
+//                                     Edit
+//                                   </button>
+//                                   <button
+//                                     onClick={() =>
+//                                       toggleCouponStatus(
+//                                         coupon.id,
+//                                         coupon.status
+//                                       )
+//                                     }
+//                                     className={`inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded ${
+//                                       coupon.status
+//                                         ? "text-red-700 bg-red-100 hover:bg-red-200"
+//                                         : "text-green-700 bg-green-100 hover:bg-green-200"
+//                                     }`}
+//                                   >
+//                                     {coupon.status ? (
+//                                       <>
+//                                         <X className="h-4 w-4 mr-1" />
+//                                         Disable
+//                                       </>
+//                                     ) : (
+//                                       <>
+//                                         <Check className="h-4 w-4 mr-1" />
+//                                         Enable
+//                                       </>
+//                                     )}
+//                                   </button>
+//                                 </div>
+//                               )}
 //                             </td>
 //                           </tr>
 //                         ))
@@ -321,8 +537,6 @@ import {
   RefreshCw,
   Check,
   X,
-  Upload,
-  FileText,
   Edit,
   Save,
 } from "lucide-react";
@@ -332,8 +546,6 @@ const AdminPanel = () => {
   const [claims, setClaims] = useState([]);
   const [newCouponCode, setNewCouponCode] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [bulkCoupons, setBulkCoupons] = useState("");
-  const [showBulkUpload, setShowBulkUpload] = useState(false);
   const [editingCoupon, setEditingCoupon] = useState(null);
   const [editedCode, setEditedCode] = useState("");
 
@@ -343,10 +555,10 @@ const AdminPanel = () => {
       setIsLoading(true);
       try {
         const couponsResponse = await fetch(
-          "http://localhost:3001/admin/coupons"
+          "https://round-robin-ebge.onrender.com/admin/coupons"
         );
         const claimsResponse = await fetch(
-          "http://localhost:3001/admin/claims"
+          "https://round-robin-ebge.onrender.com/admin/claims"
         );
 
         if (couponsResponse.ok && claimsResponse.ok) {
@@ -371,23 +583,26 @@ const AdminPanel = () => {
 
     try {
       // Add a new coupon
-      const response = await fetch("http://localhost:3001/admin/coupons", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          code: newCouponCode,
-          status: true,
-        }),
-      });
+      const response = await fetch(
+        "https://round-robin-ebge.onrender.com/admin/coupons",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            code: newCouponCode,
+            status: true,
+          }),
+        }
+      );
 
       if (response.ok) {
         setNewCouponCode("");
 
         // Refresh the coupon list
         const couponsResponse = await fetch(
-          "http://localhost:3001/admin/coupons"
+          "https://round-robin-ebge.onrender.com/admin/coupons"
         );
         const couponsData = await couponsResponse.json();
         setCoupons(couponsData);
@@ -401,7 +616,7 @@ const AdminPanel = () => {
     try {
       // Toggle coupon status
       const response = await fetch(
-        `http://localhost:3001/admin/coupons/${id}`,
+        `https://round-robin-ebge.onrender.com/admin/coupons/${id}`,
         {
           method: "PUT",
           headers: {
@@ -416,7 +631,7 @@ const AdminPanel = () => {
       if (response.ok) {
         // Refresh the coupon list
         const couponsResponse = await fetch(
-          "http://localhost:3001/admin/coupons"
+          "https://round-robin-ebge.onrender.com/admin/coupons"
         );
         const couponsData = await couponsResponse.json();
         setCoupons(couponsData);
@@ -424,59 +639,6 @@ const AdminPanel = () => {
     } catch (error) {
       console.error("Failed to update coupon status:", error);
     }
-  };
-
-  const handleBulkUpload = async () => {
-    if (!bulkCoupons.trim()) return;
-
-    const couponCodes = bulkCoupons
-      .split("\n")
-      .map((code) => code.trim())
-      .filter((code) => code.length > 0);
-
-    if (couponCodes.length === 0) return;
-
-    setIsLoading(true);
-    try {
-      // Add multiple coupons
-      const response = await fetch("http://localhost:3001/admin/coupons/bulk", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          codes: couponCodes,
-        }),
-      });
-
-      if (response.ok) {
-        setBulkCoupons("");
-        setShowBulkUpload(false);
-
-        // Refresh the coupon list
-        const couponsResponse = await fetch(
-          "http://localhost:3001/admin/coupons"
-        );
-        const couponsData = await couponsResponse.json();
-        setCoupons(couponsData);
-      }
-    } catch (error) {
-      console.error("Failed to add bulk coupons:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const content = e.target.result;
-      setBulkCoupons(content);
-    };
-    reader.readAsText(file);
   };
 
   const startEditing = (coupon) => {
@@ -500,7 +662,7 @@ const AdminPanel = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3001/admin/coupons/${id}/code`,
+        `https://round-robin-ebge.onrender.com/admin/coupons/${id}/code`,
         {
           method: "PUT",
           headers: {
@@ -515,7 +677,7 @@ const AdminPanel = () => {
       if (response.ok) {
         // Refresh the coupon list
         const couponsResponse = await fetch(
-          "http://localhost:3001/admin/coupons"
+          "https://round-robin-ebge.onrender.com/admin/coupons"
         );
         const couponsData = await couponsResponse.json();
         setCoupons(couponsData);
@@ -559,59 +721,6 @@ const AdminPanel = () => {
                   Add
                 </button>
               </div>
-              <div className="mt-4">
-                <button
-                  onClick={() => setShowBulkUpload(!showBulkUpload)}
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-full justify-center"
-                >
-                  <Upload className="h-5 w-5 mr-2" />
-                  {showBulkUpload ? "Hide Bulk Upload" : "Bulk Upload Coupons"}
-                </button>
-              </div>
-
-              {showBulkUpload && (
-                <div className="mt-4 p-4 border border-gray-200 rounded-md bg-gray-50">
-                  <h3 className="text-md font-medium text-gray-700 mb-2">
-                    Bulk Upload
-                  </h3>
-
-                  <div className="mb-3">
-                    <label
-                      htmlFor="file-upload"
-                      className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer"
-                    >
-                      <FileText className="h-5 w-5 mr-2" />
-                      Upload File
-                      <input
-                        id="file-upload"
-                        name="file-upload"
-                        type="file"
-                        accept=".txt,.csv"
-                        className="sr-only"
-                        onChange={handleFileUpload}
-                      />
-                    </label>
-                    <p className="mt-1 text-xs text-gray-500">
-                      Upload a .txt or .csv file with one coupon code per line
-                    </p>
-                  </div>
-
-                  <textarea
-                    placeholder="Or paste coupon codes here (one per line)"
-                    value={bulkCoupons}
-                    onChange={(e) => setBulkCoupons(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 h-32 text-sm"
-                  />
-
-                  <button
-                    onClick={handleBulkUpload}
-                    disabled={!bulkCoupons.trim()}
-                    className="mt-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed w-full justify-center"
-                  >
-                    Upload Coupons
-                  </button>
-                </div>
-              )}
             </div>
           </div>
 
