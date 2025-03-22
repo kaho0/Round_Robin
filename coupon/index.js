@@ -9,13 +9,7 @@ dotenv.config();
 const app = express();
 const prisma = new PrismaClient();
 app.use(express.json());
-// Update the CORS configuration
-app.use(
-  cors({
-    origin: "https://round-robin-xi.vercel.app",
-    credentials: true,
-  })
-);
+app.use(cors());
 prisma
   .$connect()
   .then(() => console.log("Connected to the database"))
