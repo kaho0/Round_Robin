@@ -61,7 +61,7 @@ const CouponList = () => {
       <div className="max-w-6xl mx-auto">
         {/* Admin Login Button - Added at the top right */}
         <div className="flex justify-end mb-4">
-          <Link to="http://localhost:5173/admin/login">
+          <Link to="https://round-robin-ebge.onrender.com/admin/login">
             <button className="px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
               Login as Admin
             </button>
