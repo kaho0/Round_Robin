@@ -9,7 +9,13 @@ dotenv.config();
 const app = express();
 const prisma = new PrismaClient();
 app.use(express.json());
-app.use(cors());
+// Update the CORS configuration
+app.use(
+  cors({
+    origin: "https://round-robin-xi.vercel.app",
+    credentials: true,
+  })
+);
 prisma
   .$connect()
   .then(() => console.log("Connected to the database"))
@@ -132,7 +138,6 @@ app.post("/admin/login", async (req, res) => {
   res.json({ message: "Login successful" });
 });
 
-// Admin view all coupons
 // Admin view all coupons
 app.get("/admin/coupons", async (req, res) => {
   console.log("GET /admin/coupons request received"); // Log the request
