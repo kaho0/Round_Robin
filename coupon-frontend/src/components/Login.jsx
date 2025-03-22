@@ -18,8 +18,6 @@ const Login = () => {
     setError("");
 
     try {
-      // Note: axios is imported in your original code but we're using fetch here
-      // as axios isn't available in this environment
       const response = await fetch(
         "https://round-robin-ebge.onrender.com/admin/login",
         {
@@ -34,6 +32,17 @@ const Login = () => {
       const data = await response.json();
 
       if (data.message === "Login successful") {
+        // Store authentication data in localStorage
+        localStorage.setItem("isAuthenticated", "true");
+
+        // If your API returns a token, you should store it too
+        if (data.token) {
+          localStorage.setItem("authToken", data.token);
+        }
+
+        // Optional: Store user information if needed
+        localStorage.setItem("username", username);
+
         navigate("/admin/dashboard");
       } else {
         setError("Invalid credentials");
