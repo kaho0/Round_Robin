@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "windows"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Coupon {
+  id         Int      @id @default(autoincrement())
+  code       String   @unique
+  status     Boolean  @default(true) 
+  claims     Claim[]
+}
+
+model Claim {
+  id          Int      @id @default(autoincrement())
+  coupon      Coupon   @relation(fields: [couponId], references: [id])
+  couponId    Int
+  userIp      String
+  userSession String?
+  claimedAt   DateTime @default(now())
+}
+
+model Admin {
+  id       Int    @id @default(autoincrement())
+  username String @unique
+  password String
+}
+
